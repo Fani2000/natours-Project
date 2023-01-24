@@ -14,7 +14,7 @@ const sendEmail = async (options) => {
     from: "Keorapetse Fani",
     to: options.email,
     subject: options.subject,
-    text: options.text,
+    text: options.message,
     // html: op
   };
 

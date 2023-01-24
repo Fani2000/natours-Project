@@ -12,6 +12,18 @@ const signToken = (id) => {
   });
 };
 
+const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+
+  res.status(201).json({
+    status: "success",
+    token,
+    data: {
+      user,
+    },
+  });
+};
+
 module.exports.signup = catchAsync(async (req, res, next) => {
   const {
     email,
@@ -33,15 +45,7 @@ module.exports.signup = catchAsync(async (req, res, next) => {
     role,
   });
 
-  const token = signToken(newUser._id);
-
-  res.status(201).json({
-    status: "success",
-    token,
-    data: {
-      user: newUser,
-    },
-  });
+  createSendToken(newUser, 200, res);
 });
 
 module.exports.login = catchAsync(async (req, res, next) => {
@@ -56,12 +60,14 @@ module.exports.login = catchAsync(async (req, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password)))
     next(new AppError("Incorrect email or password", 401));
 
-  const token = signToken(user._id);
+  // const token = signToken(user._id);
 
-  res.status(200).json({
-    status: "success",
-    token,
-  });
+  // res.status(200).json({
+  //   status: "success",
+  //   token,
+  // });
+
+  createSendToken(user, 200, res);
 });
 
 module.exports.protect = catchAsync(async (req, res, next) => {
@@ -166,10 +172,28 @@ module.exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetExpires = undefined;
   await user.save();
 
-  const token = signToken(user._id);
+  // const token = signToken(user._id);
 
-  res.status(200).json({
-    status: "success",
-    token,
-  });
+  // res.status(200).json({
+  //   status: "success",
+  //   token,
+  // });
+
+  createSendToken(user, 200, res);
+});
+
+module.exports.updatePassword = catchAsync(async (req, res, next) => {
+  const { confirmPassword, password, passwordCurrent } = req.body;
+
+  const user = await User.findById(req.user.id).select("+password");
+
+  if (!user.correctPassword(passwordCurrent, user.password)) {
+    return next(new AppError("Your current password is wrong.", 401));
+  }
+
+  user.password = password;
+  user.confirmPassword = confirmPassword;
+  await user.save();
+
+  createSendToken(user, 200, res);
 });
