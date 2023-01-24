@@ -4,6 +4,7 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/AppError");
 const { promisify } = require("util");
 const sendEmail = require("../utils/email");
+const crypto = require("crypto");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.SECRET_KEY, {
@@ -141,10 +142,34 @@ module.exports.forgotPassword = catchAsync(async (req, res, next) => {
     user.passwordResetToken = undefined;
 
     await user.save({ validateBeforeSave: false });
-  return next(new AppError('There ws an error sending the email. Try again later!', 500))
+    return next(
+      new AppError("There ws an error sending the email. Try again later!", 500)
+    );
   }
 });
 
 module.exports.resetPassword = catchAsync(async (req, res, next) => {
-  console.log(req.params.token);
+  // prettier-ignore
+  const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex')
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+
+  // prettier-ignore
+  if(!user) return next(new AppError('Token is invalid or expired', 400))
+
+  user.password = req.body.password; // setting the password
+  user.confirmPassword = req.body.confirmPassword;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+
+  const token = signToken(user._id);
+
+  res.status(200).json({
+    status: "success",
+    token,
+  });
 });
