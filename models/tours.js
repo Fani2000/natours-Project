@@ -54,10 +54,41 @@ const toursSchema = new Schema(
       default: Date.now(),
     },
     startDates: [Date],
+    startLocation: {
+      type: { type: String, default: "Point", enum: ["Point"] },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: { type: String, default: "Point", enum: ["Point"] },
+        coordinates: [Number],
+        address: String,
+        description: String,
+      },
+    ],
+    guides: [{ type: mongoose.Types.ObjectId, ref: "User" }],
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+toursSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id'
+})
+
+toursSchema.pre(/^find/, function(next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt'
+  })
+
+  next()
+})
+
 const Tour = mongoose.model("Tour", toursSchema);
+
 
 module.exports = Tour;

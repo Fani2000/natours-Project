@@ -105,10 +105,10 @@ module.exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
-  if (freshUser.changedPasswordAfter(decodedPayload.iat)) {
-    // prettier-ignore
-    return next(new AppError('User recently changed password! Please log in again.', 401))
-  }
+  // if (freshUser.changedPasswordAfter(decodedPayload.iat)) {
+  //   // prettier-ignore
+  //   return next(new AppError('User recently changed password! Please log in again.', 401))
+  // }
 
   // console.log("Token", req.token);
   req.user = freshUser;
