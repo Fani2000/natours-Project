@@ -57,7 +57,7 @@ app.get("*", (req, res, next) => {
   const errorMessage = `Can't find ${req.originalUrl} on this server!`;
   const status = "fail";
 
-  const error = new AppError(errorMessage, statusCode);
+  const error = new AppError(errorMessage, 500);
 
   next(error);
 });

@@ -20,6 +20,8 @@ const reviewSchema = new Schema(
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: "tour",
@@ -31,6 +33,40 @@ reviewSchema.pre(/^find/, function (next) {
     select: "name imageCover",
   });
 
+  next();
+});
+
+reviewSchema.statics.calcAverageRatings = async function (tour) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour },
+    },
+    {
+      $group: {
+        _id: "$tour",
+        numRating: {
+          $sum: 1,
+        },
+        averageRating: { $avg: "$rating" },
+      },
+    },
+  ]);
+  console.log(stats);
+};
+
+reviewSchema.pre("save", (next) => {
+  this.constructor.calcAverageRatings(this.tour);
+  next();
+});
+
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+  this.r = await this.findOne();
+  console.log(this.r);
+  next();
+});
+
+reviewSchema.post(/^findOneAnd/, async function (next) {
+  await this.r.constructor.calcAverageRatings(this.r.tour);
   next();
 });
 

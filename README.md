@@ -1,7 +1,7 @@
 
 # Welcome to Project Natours
 
-## A project from the complete nodejs course certificates, one of the most fully build full backend and frontend project. Its amazing, If you have time, check it out.
+ A project from the complete nodejs course certificates, one of the most fully build full backend and frontend project. Its amazing, If you have time, check it out.
 
 ### Features Includes: 
 

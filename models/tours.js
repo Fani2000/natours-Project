@@ -73,22 +73,24 @@ const toursSchema = new Schema(
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-toursSchema.virtual('reviews', {
-  ref: 'Review',
-  foreignField: 'tour',
-  localField: '_id'
-})
+toursSchema.index({ price: 1, ratingsAverage: -1 });
+toursSchema.index({ startLocation: '2dsphere' });
 
-toursSchema.pre(/^find/, function(next) {
+toursSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "tour",
+  localField: "_id",
+});
+
+toursSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'guides',
-    select: '-__v -passwordChangedAt'
-  })
+    path: "guides",
+    select: "-__v -passwordChangedAt",
+  });
 
-  next()
-})
+  next();
+});
 
 const Tour = mongoose.model("Tour", toursSchema);
-
 
 module.exports = Tour;
