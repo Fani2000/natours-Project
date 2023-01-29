@@ -1,0 +1,18 @@
+header.header
+    nav.nav.nav--tours
+        a(class='nav__el', href="/")  All tours
+        form(class="nav__search", action="#", method="get") 
+            button.nav__search-btn
+                svg
+                    use(xlink:href="/img/icons.svg#icon-search")
+            input(class="nav__search-input", name="", type="text", placeholder="Search tours")
+
+    .header__logo
+        img(src="/img/logo-white.png", alt="Natours logo")
+    nav.nav.nav--user
+        a(class="nav__el", href="#") My bookings
+        a(class="nav__el", href="#") 
+            img(class="nav__user-img", src="/img/users/user-5.jpg", alt="User Photo")
+            span Fani
+        button.nav__el Log in
+        button.nav__el.nav__el--cta Sign up

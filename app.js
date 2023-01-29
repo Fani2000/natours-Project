@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require('path')
 const morgan = require("morgan");
 const { rateLimit } = require("express-rate-limit");
 const helmet = require("helmet");
@@ -8,10 +9,13 @@ const hpp = require("hpp");
 
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
+const viewRouter = require("./routes/viewRoutes");
 const errorController = require("./controllers/errorController");
 const AppError = require("./utils/AppError");
 
 const app = express();
+app.set('view engine', 'pug')
+app.set('views', path.join(__dirname, 'views'))
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
@@ -37,6 +41,7 @@ app.use(
     ],
   })
 );
+
 app.use(express.static(`${__dirname}/public`));
 
 // app.use((req, res, next) => {
@@ -50,6 +55,7 @@ app.use((req, res, next) => {
 });
 
 // 3) ROUTES
+app.use('/', viewRouter)
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 
