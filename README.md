@@ -18,3 +18,11 @@
 
 * Frontend with pug handler
 * 
+
+### Documentation endpoints url
+
+[Click Here to view the Natours Project url](https://documenter.getpostman.com/view/11859829/2s935hPmcj)
+
+This documentation was generated using postman default documentation feature which takes all your endpoints that you defined in the project and uses them to generate a readable documentation.
+
+This will still be improved as time goes on, its not quite there yet.
