@@ -54,21 +54,21 @@ reviewSchema.statics.calcAverageRatings = async function (tour) {
   console.log(stats);
 };
 
-reviewSchema.pre("save", (next) => {
-  this.constructor.calcAverageRatings(this.tour);
-  next();
-});
+// reviewSchema.pre("save", (next) => {
+//   this.constructor.calcAverageRatings(this.tour);
+//   next();
+// });
 
-reviewSchema.pre(/^findOneAnd/, async function (next) {
-  this.r = await this.findOne();
-  console.log(this.r);
-  next();
-});
+// reviewSchema.pre(/^findOneAnd/, async function (next) {
+//   this.r = await this.findOne();
+//   console.log(this.r);
+//   next();
+// });
 
-reviewSchema.post(/^findOneAnd/, async function (next) {
-  await this.r.constructor.calcAverageRatings(this.r.tour);
-  next();
-});
+// reviewSchema.post(/^findOneAnd/, async function (next) {
+//   await this.r.constructor.calcAverageRatings(this.r.tour);
+//   next();
+// });
 
 const Review = mongoose.model("Review", reviewSchema);
 
