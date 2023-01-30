@@ -17,7 +17,8 @@
 #### Frontend:
 
 * Frontend with pug handler
-* 
+* Mapbox Api to display the map
+*
 
 ### Documentation endpoints url
 

@@ -1,11 +1,12 @@
 const express = require("express");
-const path = require('path')
+const path = require("path");
 const morgan = require("morgan");
 const { rateLimit } = require("express-rate-limit");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xssClean = require("xss-clean");
 const hpp = require("hpp");
+const cookieParse = require('cookie-parser')
 
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
@@ -14,8 +15,8 @@ const errorController = require("./controllers/errorController");
 const AppError = require("./utils/AppError");
 
 const app = express();
-app.set('view engine', 'pug')
-app.set('views', path.join(__dirname, 'views'))
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
@@ -23,39 +24,27 @@ const limiter = rateLimit({
 });
 
 // 1) MIDDLEWARES
-const scriptSrcUrls = [
-  'https://api.tiles.mapbox.com/',
-  'https://api.mapbox.com/',
-];
-const styleSrcUrls = [
-  'https://api.mapbox.com/',
-  'https://api.tiles.mapbox.com/',
-  'https://fonts.googleapis.com/',
-];
-const connectSrcUrls = [
-  'https://api.mapbox.com/',
-  'https://a.tiles.mapbox.com/',
-  'https://b.tiles.mapbox.com/',
-  'https://events.mapbox.com/',
-];
-const fontSrcUrls = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+app.use(express.json());
+app.use(cookieParse({}))
+
 app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: [],
-      connectSrc: ["'self'", ...connectSrcUrls],
-      scriptSrc: ["'self'", ...scriptSrcUrls],
-      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
-      workerSrc: ["'self'", 'blob:'],
-      objectSrc: [],
-      imgSrc: ["'self'", 'blob:', 'data:'],
-      fontSrc: ["'self'", ...fontSrcUrls],
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: {
+      allowOrigins: ["*"],
+    },
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["*"],
+        scriptSrc: ["* data: 'unsafe-eval' 'unsafe-inline' blob:"],
+      },
     },
   })
 );
 app.use(morgan("dev"));
 app.use("/api", limiter);
-app.use(express.json({ limit: "10kb" }));
+
+
 app.use(mongoSanitize());
 app.use(xssClean());
 app.use(
@@ -80,11 +69,12 @@ app.use(express.static(`${__dirname}/public`));
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
+  console.log(req.cookies)
   next();
 });
 
 // 3) ROUTES
-app.use('/',viewRouter)
+app.use("/", viewRouter);
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 
