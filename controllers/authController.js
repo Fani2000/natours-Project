@@ -123,6 +123,7 @@ module.exports.isLoggedIn = async (req, res, next) => {
         return next();
       }
 
+      req.user = currentUser;
       res.locals.user = currentUser;
       return next();
     }
