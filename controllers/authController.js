@@ -108,26 +108,30 @@ module.exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-module.exports.isLoggedIn = catchAsync(async (req, res, next) => {
+module.exports.isLoggedIn = async (req, res, next) => {
   let token;
 
-  if (req.cookies.jwt) {
-    token = req.cookies.jwt;
-    // prettier-ignore
-    const decodedPayload = await promisify(jwt.verify)(token, process.env.SECRET_KEY)
+  try {
+    if (req.cookies.jwt) {
+      token = req.cookies.jwt;
+      // prettier-ignore
+      const decodedPayload = await promisify(jwt.verify)(token, process.env.SECRET_KEY)
 
-    const currentUser = await User.findById(decodedPayload.id);
+      const currentUser = await User.findById(decodedPayload.id);
 
-    if (!currentUser) {
+      if (!currentUser) {
+        return next();
+      }
+
+      res.locals.user = currentUser;
       return next();
     }
-
-    res.locals.user = currentUser;
+  } catch (e) {
     return next();
   }
 
   next();
-});
+};
 
 module.exports.restrictTo = (...roles) =>
   catchAsync(async (req, res, next) => {
@@ -220,3 +224,13 @@ module.exports.updatePassword = catchAsync(async (req, res, next) => {
 
   createSendToken(user, 200, res);
 });
+
+exports.logout = (req, res) => {
+  res.cookie("jwt", "loggedout", {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({
+    status: "success",
+  });
+};

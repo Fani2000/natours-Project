@@ -1,3 +1,5 @@
+import { showAlert } from "./alerts.js";
+
 const login = async (email, password) => {
   try {
     const res = await axios({
@@ -10,19 +12,44 @@ const login = async (email, password) => {
     });
 
     if (res.data.status === "success") {
-      alert("Logged in successfully!");
+      // alert("Logged in successfully!");
+      showAlert("success", "Logged in successfully!");
       setTimeout(() => {
         location.assign("/");
       }, 1500);
     }
   } catch (error) {
     console.log(error);
-    alert(err.response.data.message)
+    // alert(err.response.data.message)
+    showAlert(
+      "error",
+      "Failed to log in, please enter the correct credentials!"
+    );
   }
 };
 
-document.addEventListener("DOMContentLoaded", (e) => {
-  document.querySelector(".form").addEventListener("submit", (e) => {
+const logout = async () => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: "http://localhost:3000/api/v1/users/logout",
+    });
+
+    console.log(res)
+    if (res.data.status === "success") location.assign('/');
+
+  } catch (error) {
+    showAlert("error", "Error logging out!, Please try again later.");
+  }
+};
+export default document.addEventListener("DOMContentLoaded", (e) => {
+  const logoutBtn = document.querySelector(".nav__el--logout");
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", logout);
+  }
+
+  document.querySelector(".form")?.addEventListener("submit", (e) => {
     e.preventDefault();
 
     const email = document.getElementById("email").value;
@@ -31,3 +58,4 @@ document.addEventListener("DOMContentLoaded", (e) => {
     login(email, password);
   });
 });
+
