@@ -49,7 +49,7 @@ export default document.addEventListener("DOMContentLoaded", (e) => {
     logoutBtn.addEventListener("click", logout);
   }
 
-  document.querySelector(".form")?.addEventListener("submit", (e) => {
+  document.querySelector(".form--login")?.addEventListener("submit", (e) => {
     e.preventDefault();
 
     const email = document.getElementById("email").value;

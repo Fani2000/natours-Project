@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.get("/", authController.isLoggedIn, viewsController.getOverview);
 router.get("/me", authController.isLoggedIn, viewsController.getAccount);
+router.post('/submit-user-data',authController.protect, viewsController.updateUserData)
 router.get("/login", authController.isLoggedIn, viewsController.getLogin);
 router.get("/tour/:id", authController.isLoggedIn, viewsController.getTour);
 
