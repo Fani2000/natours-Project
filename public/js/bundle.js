@@ -305,43 +305,38 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 var updateSettings = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(name, email) {
+  var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(data) {
     var res;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
-          console.log(name, email);
-          _context.prev = 1;
-          _context.next = 4;
+          _context.prev = 0;
+          _context.next = 3;
           return axios({
             method: "PATCH",
             url: "http://localhost:3000/api/v1/users/updateMe",
-            data: {
-              name: name,
-              email: email
-            }
+            data: data
           });
-        case 4:
+        case 3:
           res = _context.sent;
-          console.log(res.data);
           if (res.data.status === "success") {
             (0, _alerts.showAlert)('success', 'Changed the user details!');
             location.assign('/me');
           }
-          _context.next = 13;
+          _context.next = 11;
           break;
-        case 9:
-          _context.prev = 9;
-          _context.t0 = _context["catch"](1);
+        case 7:
+          _context.prev = 7;
+          _context.t0 = _context["catch"](0);
           console.log(_context.t0.message);
           (0, _alerts.showAlert)("error", _context.t0.message);
-        case 13:
+        case 11:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[1, 9]]);
+    }, _callee, null, [[0, 7]]);
   }));
-  return function updateSettings(_x, _x2) {
+  return function updateSettings(_x) {
     return _ref.apply(this, arguments);
   };
 }();
@@ -349,9 +344,11 @@ var _default = document.addEventListener("DOMContentLoaded", function (e) {
   var _document$querySelect;
   (_document$querySelect = document.querySelector(".form-user-data")) === null || _document$querySelect === void 0 ? void 0 : _document$querySelect.addEventListener("submit", function (e) {
     e.preventDefault();
-    var email = document.getElementById("email").value;
-    var username = document.getElementById("name").value;
-    updateSettings(username, email);
+    var form = new FormData();
+    form.append('name', document.getElementById("name").value);
+    form.append('email', document.getElementById("email").value);
+    form.append('photo', document.getElementById("photo").files[0]);
+    updateSettings(form);
   });
 });
 exports.default = _default;

@@ -3,6 +3,8 @@ const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const factory = require("../middlewares/handlerFactory");
 
+
+
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((key) => {
@@ -23,6 +25,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 });
 
 module.exports.updateMe = catchAsync(async (req, res, next) => {
+  
   if (req.body.password || req.body.confirmPassword) {
     return next(
       new AppError(
@@ -33,6 +36,8 @@ module.exports.updateMe = catchAsync(async (req, res, next) => {
   }
 
   const filteredBody = filterObj(req.body, "email", "name");
+
+  if(req.file) filteredBody.photo = req.file.filename;
 
   const user = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
@@ -48,7 +53,6 @@ module.exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: "error",
@@ -58,10 +62,9 @@ exports.createUser = (req, res) => {
 
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
-  next()
-}
+  next();
+};
 
-
-exports.getUser = factory.getOne(User)
+exports.getUser = factory.getOne(User);
 exports.deleteUser = factory.deleteOne(User);
 exports.updateUser = factory.updateOne(User);
