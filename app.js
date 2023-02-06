@@ -8,6 +8,7 @@ const xssClean = require("xss-clean");
 const hpp = require("hpp");
 const cookieParse = require("cookie-parser");
 const compression = require('compression')
+const cors = require('cors')
 
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
@@ -25,6 +26,7 @@ const limiter = rateLimit({
 });
 
 // 1) MIDDLEWARES
+app.use(cors())
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParse({}));
