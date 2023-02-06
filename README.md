@@ -27,3 +27,6 @@
 This documentation was generated using postman default documentation feature which takes all your endpoints that you defined in the project and uses them to generate a readable documentation.
 
 This will still be improved as time goes on, its not quite there yet.
+
+### Deployed site to heroku url
+[Click here to view the Natours project UI and backend together in production](https://fani-natours.herokuapp.com/)
