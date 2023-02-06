@@ -7,6 +7,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const xssClean = require("xss-clean");
 const hpp = require("hpp");
 const cookieParse = require("cookie-parser");
+const compression = require('compression')
 
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
@@ -66,6 +67,8 @@ app.use(express.static(`${__dirname}/public`));
 //   console.log("Hello from the middleware 👋");
 //   next();
 // });
+
+app.use(compression())
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
